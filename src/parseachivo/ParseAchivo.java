@@ -27,10 +27,10 @@ public class ParseAchivo {
     public static void main(String[] args) throws IOException {
         ArrayList<String[]> dataset = new ArrayList<>();
         String filePath = args[0];
-        String filePath2 = args[1];
+//        String filePath2 = args[1];
         BufferedReader bfReader = null;
         BufferedReader bfReader2 = null;
-        String nombreArchivoSalida = "src/dataset_completo_2.csv";
+        String nombreArchivoSalida = "src/dataset_completo_2_mod.csv";
         //FileWriter escritorArchivo = new FileWriter(nombreArchivoSalida);
         BufferedWriter bufferEscritura = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nombreArchivoSalida), "windows-1252"));
         //BufferedWriter bufferEscritura = new BufferedWriter(escritorArchivo);
@@ -40,9 +40,9 @@ public class ParseAchivo {
             InputStreamReader isr = new InputStreamReader(is, "windows-1252");
             bfReader = new BufferedReader(isr);
             String currentLineString = bfReader.readLine();
-            FileInputStream is2 = new FileInputStream(filePath2);
+           /* FileInputStream is2 = new FileInputStream(filePath2);
             InputStreamReader isr2 = new InputStreamReader(is2, "windows-1252");
-            bfReader2 = new BufferedReader(isr2);
+            bfReader2 = new BufferedReader(isr2);*/
             //preambulo
             /*while (!currentLineString.contains("@data")) {
                 bufferEscritura.write(currentLineString + "\n");
@@ -50,15 +50,15 @@ public class ParseAchivo {
             }
             bufferEscritura.write(currentLineString + "\n");*/
             //seccion de datos
-            String currentLineString2 = bfReader2.readLine();
+//            String currentLineString2 = bfReader2.readLine();
             String aux;
             while (currentLineString != null) {
-                aux = currentLineString + "," + currentLineString2;
-//                aux = currentLineString;
+//                aux = currentLineString + "," + currentLineString2;
+                aux = currentLineString;
                 inst = aux.split(",");
                 dataset.add(inst);
                 currentLineString = bfReader.readLine();
-                currentLineString2 = bfReader2.readLine();
+//                currentLineString2 = bfReader2.readLine();
             }
             //seleccionar caracteristicas del nuevo dataset.
             //dataset = checkDuplicados(dataset);
@@ -79,10 +79,10 @@ public class ParseAchivo {
             //dataset = getPrePensyl(dataset);
 //            dataset = getEnding(dataset);
             //dataset = fixPrePosPensyl(dataset);
-//            dataset = filterByCol(dataset, 12, "1");
+            dataset = filterByCol(dataset, 14, "-");
 //            dataset = parche(dataset);
 //            dataset = verbosUsados(dataset);
-            dataset = makeTypeOfVerb(dataset);
+//            dataset = makeTypeOfVerb(dataset);
 
             LinkedList< String> datasetToString = new LinkedList<>();
             String lineToString;
@@ -623,7 +623,7 @@ public class ParseAchivo {
     public static ArrayList filterByCol(ArrayList<String[]> dataset, int col, String val) {
         ArrayList<String[]> newDataSet = new ArrayList<>();
         for (String[] strings : dataset) {
-            if (strings[col].equals(val)) {
+            if (!strings[col].equals(val)) {
                 newDataSet.add(strings);
             }
         }
@@ -761,15 +761,14 @@ public class ParseAchivo {
             newStr[3] = str[3];
             newStr[4] = str[4];
             newStr[5] = str[5];
+            newStr[6] = str[6];
+            newStr[7] = str[7];
             newStr[8] = str[8];
             newStr[9] = str[9];
             newStr[10] = str[10];
             newStr[11] = str[11];
             newStr[14] = str[13];
             ss.setString(str[0]);
-            inf = ss.silabear().split("-");
-            ss.setString(str[13]);
-            conj = ss.silabear().split("-");
             //si el pensyl es regular o irregular
             if (str[10].equals("0")) {
                 newStr[12] = "0"; //es regular
