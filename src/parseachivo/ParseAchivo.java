@@ -30,7 +30,7 @@ public class ParseAchivo {
 //        String filePath2 = args[1];
         BufferedReader bfReader = null;
         BufferedReader bfReader2 = null;
-        String nombreArchivoSalida = "src/dataset_completo_2_mod.csv";
+        String nombreArchivoSalida = "src/dataset_irreg_3.csv";
         //FileWriter escritorArchivo = new FileWriter(nombreArchivoSalida);
         BufferedWriter bufferEscritura = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nombreArchivoSalida), "windows-1252"));
         //BufferedWriter bufferEscritura = new BufferedWriter(escritorArchivo);
@@ -40,7 +40,7 @@ public class ParseAchivo {
             InputStreamReader isr = new InputStreamReader(is, "windows-1252");
             bfReader = new BufferedReader(isr);
             String currentLineString = bfReader.readLine();
-           /* FileInputStream is2 = new FileInputStream(filePath2);
+            /* FileInputStream is2 = new FileInputStream(filePath2);
             InputStreamReader isr2 = new InputStreamReader(is2, "windows-1252");
             bfReader2 = new BufferedReader(isr2);*/
             //preambulo
@@ -67,7 +67,7 @@ public class ParseAchivo {
             //dataset = getIrregulares(dataset);
             //dataset = getStemAndPensyl(dataset);
 //            dataset = separarStem_2(dataset);
-//            dataset = getColumn(dataset, new int[]{11});
+//            dataset = getColumn(dataset, new int[]{14});
             //dataset = getSuff(dataset);
             //dataset = getClassPensyl(dataset);
             //dataset = getPensyl(dataset);
@@ -79,7 +79,8 @@ public class ParseAchivo {
             //dataset = getPrePensyl(dataset);
 //            dataset = getEnding(dataset);
             //dataset = fixPrePosPensyl(dataset);
-            dataset = filterByCol(dataset, 14, "-");
+//            dataset = filterByCol(dataset, 5, "n", true);
+            dataset = deleteInfinitivo(dataset, "gar", "gar");
 //            dataset = parche(dataset);
 //            dataset = verbosUsados(dataset);
 //            dataset = makeTypeOfVerb(dataset);
@@ -620,10 +621,72 @@ public class ParseAchivo {
         return newDataSet;
     }
 
-    public static ArrayList filterByCol(ArrayList<String[]> dataset, int col, String val) {
+    public static ArrayList separateStem(ArrayList<String[]> dataset) throws IOException {
+        ArrayList<String[]> newDataSet = new ArrayList<>();
+        String[] inst;
+        SeparaSilabas ss = new SeparaSilabas();
+        char charStem;
+        String classStem;
+        for (String[] strings : dataset) {
+            inst = new String[strings.length];
+            charStem = strings[5].charAt(0);
+            classStem = strings[5].charAt(0);
+        }
+        newDataSet.add(inst);
+        return newDataSet;
+    }
+
+    public static ArrayList filterByEnding(ArrayList<String[]> dataset, String ending) {
         ArrayList<String[]> newDataSet = new ArrayList<>();
         for (String[] strings : dataset) {
-            if (!strings[col].equals(val)) {
+            if (strings[0].endsWith(ending)) {
+                newDataSet.add(strings);
+            }
+        }
+        return newDataSet;
+    }
+
+    /**
+     * Devuelve el dataset con los valores filtrados. Si flag es true, los
+     * valores filtrados pertenecen al dataset nuevo, si flag es false el nuevo
+     * dataset no contiene los valores filtrados
+     *
+     * @param dataset
+     * @param col
+     * @param val
+     * @param flag
+     * @return
+     */
+    public static ArrayList filterByCol(ArrayList<String[]> dataset, int col, String val, boolean flag) {
+        ArrayList<String[]> newDataSet = new ArrayList<>();
+        for (String[] strings : dataset) {
+            if (flag) {
+                if (strings[col].equals(val)) {
+                    newDataSet.add(strings);
+                }
+            } else {
+                if (!strings[col].equals(val)) {
+                    newDataSet.add(strings);
+                }
+            }
+        }
+        return newDataSet;
+    }
+
+    /**
+     * Elimina los infinitivos con el sufijo suff, pero deja un verbo que puede
+     * saltarse esta regla. Por ejemplo, suff = decir, verbo = decir, elimina
+     * los infinitivos tales como predecir, pero deja la palabra decir.
+     *
+     * @param dataset
+     * @param suff
+     * @param verbo
+     * @return
+     */
+    public static ArrayList deleteInfinitivo(ArrayList<String[]> dataset, String suff, String verbo) {
+        ArrayList<String[]> newDataSet = new ArrayList<>();
+        for (String[] strings : dataset) {
+            if (!strings[0].endsWith(suff) || strings[0].equals(verbo)) {
                 newDataSet.add(strings);
             }
         }
